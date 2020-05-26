@@ -4,7 +4,29 @@
 
 using namespace std;
 
+string LowCase(string x) {
+	unsigned int xlen = x.length();
+	for (unsigned int i = 0; i < xlen; i++) {
+		if (x[i] > 'A' && x[i] < 'Z') {
+			x[i] += 32;
+		}
+	}
+	return x;
+}
+
+string LowCase(char *y) {
+	string x = y;
+	unsigned int xlen = x.length();
+	for (unsigned int i = 0; i < xlen; i++) {
+		if (x[i] > 'A' && x[i] < 'Z') {
+			x[i] += 32;
+		}
+	}
+	return x;
+}
+
 int LoadStrFile(string szFileName,string szData[]) {
+	cout << "load " <<szFileName  << ":" << endl;
 	ifstream srcFile(szFileName, ios::in);
 	int n = 0;
 	while (srcFile >> szData[n]) {
@@ -21,16 +43,30 @@ int LoadStrFile(string szFileName,string szData[]) {
 int main(int argc, char** argv) {
 	HWND hDesktop;
 	HWND hCurrentTop;
-	HWND hOldTop;
+	HWND hOldTop=0;
 	HWND hMe;
 	string szAllowInTop[200];
+	TCHAR szCurrentPath[255] = { 0 };
+	bool bHideConsole = true;
 
-	hOldTop = 0;
-
-	int AllowInTopCount = LoadStrFile("in.txt", szAllowInTop);
+	GetCurrentDirectory( 200, szCurrentPath);
+	DWORD NoHideAttr = GetFileAttributes("NoHide");
 	hMe = GetConsoleWindow();
-	ShowWindow(hMe, SW_HIDE);
+	if (NoHideAttr != 0xffffffff)
+	{
+		ShowWindow(hMe, SW_SHOW);
+	}
+	else{
+		ShowWindow(hMe, SW_HIDE);
+
+	}
+	printf("CurrentPath = %s \t NoHide Attrib = %d\n", szCurrentPath, NoHideAttr);
+
+	int AllowInTopCount = LoadStrFile("AllowInTop.txt", szAllowInTop);
+
 	bool bWantLock = false;
+
+	cout << "Who is Top:" << endl;
 	while(1){
 		hDesktop = GetDesktopWindow();
 		//hCurrentTop = GetForegroundWindow();
@@ -53,7 +89,8 @@ int main(int argc, char** argv) {
 					DWORD maxsize = 255;
 					QueryFullProcessImageName(handle, 0, szFileName, &maxsize);
 					for (int i = 0; i < AllowInTopCount; i++) {
-						if (szAllowInTop[i] == szFileName) {
+						
+						if (LowCase(szAllowInTop[i]) == LowCase(szFileName)) {
 							bIsAllowInTop = true;
 							break;
 						}
@@ -61,7 +98,7 @@ int main(int argc, char** argv) {
 					
 					if (bWantLock == 1 && bIsAllowInTop == 0) {
 						LockWorkStation();
-						printf("!!!!!!!!!!!!!!!Lock\n");
+						printf("!!!!!!!!!!!!!!!Lock>>>");
 						bWantLock = 0;
 					}
 					if (bWantLock == 0 && bIsAllowInTop == 1) {
