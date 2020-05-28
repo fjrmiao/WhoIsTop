@@ -41,7 +41,7 @@ int LoadStrFile(string szFileName,string szData[]) {
 }
 
 int main(int argc, char** argv) {
-	HWND hDesktop;
+	//HWND hDesktop;
 	HWND hCurrentTop;
 	HWND hOldTop=0;
 	HWND hMe;
@@ -68,9 +68,9 @@ int main(int argc, char** argv) {
 
 	cout << "Who is Top:" << endl;
 	while(1){
-		hDesktop = GetDesktopWindow();
-		//hCurrentTop = GetForegroundWindow();
-		hCurrentTop = GetTopWindow(hDesktop);
+		//hDesktop = GetDesktopWindow();hCurrentTop = GetTopWindow(hDesktop);
+		hCurrentTop = GetForegroundWindow();
+		//hCurrentTop = GetTopWindow(NULL);
 		
 		if(hCurrentTop!=hOldTop){
 			DWORD pidCurrentTop;
