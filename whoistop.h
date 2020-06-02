@@ -14,7 +14,8 @@ class whoistop {
 	int AllowInTopCount=0;
 	string szAllowInTop[200];
 	void init(string filestr) {
-		AllowInTopCount = LoadStrFile(filestr, szAllowInTop);
+		AllowInTopCount = LoadStrFile(filestr, szAllowInTop, LowCase);
+		
 	}
 
 	public:
@@ -45,9 +46,10 @@ class whoistop {
 				{
 					DWORD maxsize = 255;
 					QueryFullProcessImageName(handle, 0, szFileName, &maxsize);
+
 					for (int i = 0; i < AllowInTopCount; i++) {
 
-						if (LowCase(szAllowInTop[i]) == LowCase(szFileName)) {
+						if (szAllowInTop[i] == LowCase(szFileName)) {
 							bIsAllowInTop = true;
 							break;
 						}
